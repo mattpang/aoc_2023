@@ -44,6 +44,7 @@ g.add_node(spos[::-1])
 
 # better to have a queue of nodes we need to travel
 todo = [spos[::-1]]
+travelled=0
 while True:
     for pos in todo:
         char = m[pos[1],pos[0]]
@@ -53,14 +54,17 @@ while True:
                 # print(pos,(x,y),(u,v),m[y+v,x+u])
                 if (x+u,y+v) not in g.nodes:
                     todo.append((x+u,y+v))
+                    travelled+=1
                 g.add_edge((x,y),(x+u,y+v))
                 g.add_node((x,y))
                 g.add_node((x+u,y+v))
+
         todo.remove(pos)
     if len(todo)==0:
         break
 
-
+print(travelled//2)
+exit()
 print(len(g.nodes))
 
 print(g.nodes)
@@ -84,24 +88,24 @@ else:
     debug = True 
 
 o = np.zeros_like(m,dtype=int)
+
+for ans in all_lengths:
+    try:
+        o[ans[0][::-1]] = ans[1]
+    except IndexError:
+        pass
 if debug:
-    for ans in all_lengths:
-        try:
-            o[ans[0][::-1]] = ans[1]
-        except IndexError:
-            pass
     print(m)
     print(o)
 print(max(all_lengths, key=lambda x:x[1]))
-print('part1:',max(paths))
+print('part1:',max(paths),travelled//2)
 
-exit()
 # enclosed 
 
 from skimage.morphology import flood_fill
 # if you pad it out, then you always fill out the non enclosed bits.
 n = flood_fill(np.pad(o,1),seed_point=(0,0),new_value=-1)
-print(n)
+# print(n)
 print(len(np.where(n==0)[0]))
 # for x in nx.connected_components(g):
 #     print(x)
